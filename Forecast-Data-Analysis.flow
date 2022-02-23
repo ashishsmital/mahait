@@ -1,0 +1,444 @@
+{
+  "metadata": {
+    "version": 1
+  },
+  "nodes": [
+    {
+      "node_id": "f5646c1d-98c0-4f0c-8bf4-17b901273d56",
+      "type": "SOURCE",
+      "operator": "sagemaker.s3_source_0.1",
+      "parameters": {
+        "dataset_definition": {
+          "__typename": "S3CreateDatasetDefinitionOutput",
+          "datasetSourceType": "S3",
+          "name": "Forecast-related-data.csv",
+          "description": null,
+          "s3ExecutionContext": {
+            "__typename": "S3ExecutionContext",
+            "s3Uri": "s3://mitala-forecast-poc/Forecast-related-data.csv",
+            "s3ContentType": "csv",
+            "s3HasHeader": true
+          }
+        }
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "default",
+          "sampling": {
+            "sampling_method": "sample_by_limit",
+            "limit_rows": 50000
+          }
+        }
+      ]
+    },
+    {
+      "node_id": "001e1b3d-8265-457c-b4e4-f5c5f078afc2",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.infer_and_cast_type_0.1",
+      "parameters": {},
+      "trained_parameters": {
+        "schema": {
+          "timestamp": "datetime",
+          "Average R phase voltage": "float",
+          "Average Y phase voltage": "float",
+          "Average B phase voltage": "float",
+          "Average R phase current": "float",
+          "Average Y phase current": "float",
+          "Average B phase current": "float",
+          "Power Factor": "float",
+          "KVA": "float",
+          "KVAR": "float",
+          "Voltage-UNBALANCE": "float",
+          "Current-UNBALANCE": "float"
+        }
+      },
+      "inputs": [
+        {
+          "name": "default",
+          "node_id": "f5646c1d-98c0-4f0c-8bf4-17b901273d56",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "9b191a52-f691-4202-af7f-b3d220e26014",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Average R phase voltage",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "001e1b3d-8265-457c-b4e4-f5c5f078afc2",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "29d2aeba-9f64-473c-9cc4-016f15234812",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Average Y phase voltage",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "9b191a52-f691-4202-af7f-b3d220e26014",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "af135271-260b-4ca1-b3d0-500a54ce81d3",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Average B phase voltage",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "29d2aeba-9f64-473c-9cc4-016f15234812",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "3feb9865-db09-4841-8a97-0aa55ac6cbdf",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Average R phase current",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "af135271-260b-4ca1-b3d0-500a54ce81d3",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "46741b7f-7282-4a96-b4d1-13a80658e9cb",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Average Y phase current",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "3feb9865-db09-4841-8a97-0aa55ac6cbdf",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "06c1e699-b44f-46b1-ba12-b547c151cd54",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Average B phase current",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "46741b7f-7282-4a96-b4d1-13a80658e9cb",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "968c27c6-ff06-441b-90ff-d0fa308077c2",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Power Factor",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "06c1e699-b44f-46b1-ba12-b547c151cd54",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "3e8d9817-03c7-49a9-8fc3-e5e7c05fd48f",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "KVA",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "968c27c6-ff06-441b-90ff-d0fa308077c2",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "9ff9c93b-f5eb-4af2-8571-9b6366da0528",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "KVAR",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "3e8d9817-03c7-49a9-8fc3-e5e7c05fd48f",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "2f04f600-dd14-4eda-a3fb-6637603060e4",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Voltage-UNBALANCE",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "9ff9c93b-f5eb-4af2-8571-9b6366da0528",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "23b3f0fa-8a31-49fe-a255-6d3164fd186d",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.time_series_0.1",
+      "parameters": {
+        "Handle missing_parameters": {
+          "hm_input_type_Along column_parameters": {
+            "hmac_output_column": "",
+            "hmac_id_column": "",
+            "hmac_strategy": "Interpolate",
+            "hmac_leftovernans": "Fill with Forward/Backward feed",
+            "hmac_strategy_Interpolate_parameters": {
+              "hmac_interpolation_technique": "linear"
+            },
+            "hmac_sequence_column": "Current-UNBALANCE",
+            "hmac_timestamp_column": "timestamp"
+          },
+          "hm_input_type": "Along column"
+        },
+        "operator": "Handle missing"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "2f04f600-dd14-4eda-a3fb-6637603060e4",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    }
+  ]
+}
